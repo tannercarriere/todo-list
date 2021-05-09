@@ -9,13 +9,6 @@
           <to-do-item v-show="!isDone" :todo="item.task" :id="index" v-on:delete="pop(index)" v-on:input="edit(index)"/>
         </li>
       </ul>
-      <!--h1 v-if="done.length > 0" class="title">TO-DO LIST</h1>
-      <ul class="list-container">
-        <li v-for="item in todos" :key="item">
-          <to-do-item :todo=item />
-        </li>
-      </ul-->
-      
   </div>
 </template>
 
@@ -31,29 +24,29 @@ export default {
       done: []
     }
   }, mounted(){
-      if(localStorage.getItem("todos")){
+      if(localStorage.getItem("todos")){//if we have values in local storage set those as default
         this.todos = JSON.parse(localStorage.getItem("todos"));
       }
   },
   watch:{
     todos:{
       deep: true,
-      handler(){
+      handler(){//if the todos array changes store the change
         localStorage.setItem('todos', JSON.stringify(this.todos));
       }
     }
     
   },
   methods: {
-    push(){
-      this.todos.push({task:this.todo, id:Date.now()});
+    push(){//push an new object to the list 
+      this.todos.push({task:this.todo, id:Date.now()}); //the id allows us to have tasks of duplicate names
       this.todo = ""
     },
     pop(index){
-      this.todos.splice(index, 1);
+      this.todos.splice(index, 1);//drop the item at the given index
     },
     edit(index){
-      this.todos[index].task = document.getElementById("edit").value;
+      this.todos[index].task = document.getElementById("edit").value; // change the task at the given index
     }
   },
   components:{
