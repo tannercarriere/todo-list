@@ -5,8 +5,8 @@
         <li>
           <input ref="push" class="input" type="text" @keyup.enter="push()" v-model="todo">
         </li>
-        <li v-for="item in todos" :key="item">
-          <to-do-item v-show="!isDone" :todo=item v-on:delete="pop(item)"/>
+        <li v-for="(item, index) in todos" :key="item.id">
+          <to-do-item v-show="!isDone" :todo="item.task" :id="index" v-on:delete="pop(index)" v-on:input="edit(index)"/>
         </li>
       </ul>
       <!--h1 v-if="done.length > 0" class="title">TO-DO LIST</h1>
@@ -46,18 +46,14 @@ export default {
   },
   methods: {
     push(){
-      this.todos.push(this.todo);
-      this.cur++;
+      this.todos.push({task:this.todo, id:Date.now()});
       this.todo = ""
     },
-    pop(element){
-      for(var i = 0; i < this.todos.length; i++){
-        if(element == this.todos[i]){
-            this.todos.splice(i, 1); 
-            i--; 
-            break;
-        }
-      }
+    pop(index){
+      this.todos.splice(index, 1);
+    },
+    edit(index){
+      this.todos[index].task = document.getElementById("edit").value;
     }
   },
   components:{
@@ -112,7 +108,7 @@ export default {
   .input:focus{
     background-color: rgba(255, 255, 255, 0.75);
   }
-  .delete-button{
+  .button{
     background-color: lightslategray;
     border: none;
   }
