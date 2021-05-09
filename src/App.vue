@@ -27,26 +27,19 @@ export default {
     return {
       isDone: false,
       todo: "",
-      todos: [],
+      todos: Array(),
       done: []
     }
   }, mounted(){
-    if(localStorage.todos.length>0){
-      this.todos = Array(localStorage.length);
-      for(var i = 0; i < localStorage.todos.length; i++){
-        this.todos[i] = localStorage.todos[i];
+      if(localStorage.getItem("todos")){
+        this.todos = JSON.parse(localStorage.getItem("todos"));
       }
-      localStorage.todos = null;
-    }
   },
   watch:{
     todos:{
       deep: true,
-      handler(newTodos){
-        localStorage.todos = Array(newTodos.length);
-        for(var i = 0; i < newTodos.length; i++){
-          localStorage.todos[i] = newTodos[i];
-        }
+      handler(){
+        localStorage.setItem('todos', JSON.stringify(this.todos));
       }
     }
     
@@ -62,6 +55,7 @@ export default {
         if(element == this.todos[i]){
             this.todos.splice(i, 1); 
             i--; 
+            break;
         }
       }
     }
