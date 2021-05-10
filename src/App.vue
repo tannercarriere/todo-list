@@ -6,7 +6,7 @@
           <input ref="push" class="input" type="text" @keyup.enter="push()" v-model="todo">
         </li>
         <li v-for="(item, index) in todos" :key="item.id">
-          <to-do-item v-show="!isDone" :todo="item.task" :id="index" v-on:delete="pop(index)" v-on:input="edit(index)"/>
+          <to-do-item :todo="item.task" :id="index" @delete="pop(index)" @input="edit(index)" @add-cat="addCat(index)"/>
         </li>
       </ul>
   </div>
@@ -18,10 +18,8 @@ export default {
   name: 'App',
   data () {
     return {
-      isDone: false,
       todo: "",
-      todos: Array(),
-      done: []
+      todos: [],
     }
   }, mounted(){
       if(localStorage.getItem("todos")){//if we have values in local storage set those as default
@@ -39,8 +37,13 @@ export default {
   },
   methods: {
     push(){//push an new object to the list 
-      this.todos.push({task:this.todo, id:Date.now()}); //the id allows us to have tasks of duplicate names
-      this.todo = ""
+      this.todos.push(
+        {
+          task:this.todo, 
+          id:Date.now(),
+        }
+      ); //the id allows us to have tasks of duplicate names
+      this.todo = "";
     },
     pop(index){
       this.todos.splice(index, 1);//drop the item at the given index
@@ -78,15 +81,16 @@ export default {
     margin: 5px;
     text-align: center;
   }
-  .todo-container-unchecked{
-    background-color: rgba(255,255,255,.25);
-    margin: 5px;
+  .todo-container{
+    margin: 1rem 1.5rem;
     padding: 10px;
   }
-  .todo-container-checked{
+  .checked{
     background-color: rgba(255,255,255,.5);
-    margin: 5px;
-    padding: 10px;
+  }
+  .unchecked{
+    background-color: rgba(255,255,255,.25);
+    color: rgba(255,255,255,.5);
   }
   .list-container {
     width: 90%;
@@ -104,5 +108,7 @@ export default {
   .button{
     background-color: lightslategray;
     border: none;
+    margin-top: .25rem;
+    margin-right: .1rem;
   }
 </style>
