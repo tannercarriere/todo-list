@@ -15,6 +15,7 @@
         <input type="button" value="Submit" class="button" v-on:click="editSwitch()" >
       </span>
       <input type="button" value="Note" class="button" v-on:click="noteRequest()" >
+      <slot></slot>
     </div>
 </template>
 
