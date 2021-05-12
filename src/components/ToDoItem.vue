@@ -1,5 +1,5 @@
 <template>
-    <div :class="{ 'todo-container unchecked': done, 'todo-container checked': !done }" >
+    <div v-bind:class="{ 'todo-container unchecked': done, 'todo-container checked': !done }" >
       <!-- Conditionally render the checkbox if we're not editing -->
       <input v-if="!edit" type="checkbox" class="check-box" v-model="done">
         <!-- if not editing render the task as plain text-->
