@@ -6,7 +6,9 @@
           <input class="input" type="text" @keyup.enter="push()" v-model="todo">
         </li>
         <li v-for="(item, index) in todos" :key="item.id">
-          <to-do-item :todo="item.task" :id="index" @delete="pop(index)" @edit="edit(index)" @notes="showNote(index)"/>
+          <to-do-item :todo="item.task" :id="index" @delete="pop(index)" @edit="edit(index)" @notes="showNote(index)">
+            <note v-show="item.showNote" :task="item.task" :message="item.message" @edit="editNote(index)" @close="showNote(index)"/>
+          </to-do-item>
         </li>
         <div ref="notes"></div>
       </ul>
@@ -16,21 +18,18 @@
 <script>
 import ToDoItem from './components/ToDoItem.vue'
 import Note from './components/Note.vue'
-import Vue from 'vue'
+//import Vue from 'vue'
 export default {
   name: 'App',
   data () {
     return {
       todo: "",
       todos: [],
-      notes: []
+      notes: false
     }
   }, mounted(){
       if(localStorage.getItem("todos")){//if we have values in local storage set those as default
         this.todos = JSON.parse(localStorage.getItem("todos"));
-      }
-      if(localStorage.getItem("notes")){//if we have values in local storage set those as default
-        this.notes = JSON.parse(localStorage.getItem("notes"));
       }
   },
   watch:{
@@ -39,57 +38,36 @@ export default {
       handler(){//if the todos array changes store the change
         localStorage.setItem('todos', JSON.stringify(this.todos));
       }
-    },
-    notes:{
-      deep: true,
-      handler(){
-        console.log(this.notes)
-        localStorage.setItem('notes', JSON.stringify(this.notes));
-      }
     }
-    
   },
   methods: {
     push(){//push an new object to the list 
       this.todos.push(
         {
           task:this.todo, 
-          id:Date.now()
+          id:Date.now(),
+          message:"",
+          showNote: false
         }
       ); //the id allows us to have tasks of duplicate names
-      this.notes.push(
-        {
-          task:this.todo, 
-          message:""
-        }
-      );
       this.todo = "";
     },
     pop(index){
       this.todos.splice(index, 1);//drop the item at the given index
-      this.notes.splice(index, 1);
     },
     edit(index){
       this.todos[index].task = document.getElementById("edit").value; // change the task at the given index
     },
     showNote(index){
-      console.log("lmao")
-      let ComponentClass = Vue.extend(Note);
-      let instance = new ComponentClass({
-        propsData: {
-          task: this.notes[index].task,
-          message: this.notes[index].message
-        }
-      });
-      instance.$mount();
-      this.$refs.notes.appendChild(instance.$el);
-      this.$on.edit('edit', function(){
-
-      });
+      this.todos[index].showNote = !this.todos[index].showNote;
+    },
+    editNote(index){
+      this.todos[index].message = document.getElementById("edit-note").value; // change the task at the given index
     }
   },
   components:{
       ToDoItem,
+      Note
   }
 }
 </script>
@@ -151,12 +129,24 @@ export default {
   .note-box{
     background-color: rgba(255,255,255,.5);
     width: 24rem;
-    height: 25rem;
-    padding: 1rem;
+    height: 28rem;
+    padding: .5rem;
+    margin-top: .5rem;
   }
   .message-box{
+    margin-top: .5rem;
     background-color: rgba(255,255,255,.5);
     width: 95%;
     height: 90%;
+  }
+  .close{
+    display: block;
+    float: right;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .note-title{
+    display: inline;
+    padding-bottom: .5rem;
   }
 </style>
