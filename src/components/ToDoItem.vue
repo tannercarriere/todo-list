@@ -1,5 +1,5 @@
 <template>
-    <div v-bind:class="{ 'todo-container unchecked': done, 'todo-container checked': !done }" >
+    <div v-bind:class="{ 'todo-container unchecked': !done, 'todo-container checked': done }" >
       <!-- Conditionally render the checkbox if we're not editing -->
       <input v-if="!edit" type="checkbox" class="check-box" v-model="done">
         <!-- if not editing render the task as plain text-->
@@ -13,6 +13,12 @@
       </span>
       <span v-else>
         <input type="button" value="Submit" class="button" v-on:click="editSwitch()" >
+        <input v-if="!pickingColor" class="button" type="button" value="Change color" @click="colorSwitch()"/>
+        <ul v-else class="color-picker">
+          <li class="color" ><input id="red" type="button" @click="sendColor('red')"></li>
+          <li class="color" ><input id="yellow" type="button" @click="sendColor('yellow')"></li>
+          <li class="color" ><input id="none" type="button" @click="sendColor('none')"></li>
+        </ul>
       </span>
       <input type="button" value="Note" class="button" v-on:click="noteRequest()" >
       <slot></slot>
@@ -24,9 +30,11 @@ export default {
   data () {
     let done= false;
     let edit= false;
+    let pickingColor = false;
     return {
       done,
-      edit
+      edit,
+      pickingColor
     }
   },
   props: {
@@ -44,6 +52,12 @@ export default {
       },
       noteRequest(){
         this.$emit('notes');
+      },
+      colorSwitch(){
+        this.pickingColor = !this.pickingColor
+      },
+      sendColor(color){
+        this.$emit("color-change", color);
       }
   }
 }
