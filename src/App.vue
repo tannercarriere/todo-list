@@ -1,17 +1,16 @@
 <template>
   <div id="app">
       <h1 class="title">TO-DO LIST</h1>
+      <input class="input" type="text" @keyup.enter="push()" v-model="todo">
       <ul class="list-container" >
-        <li>
-          <input class="input" type="text" @keyup.enter="push()" v-model="todo">
-        </li>
         <li v-for="(item, index) in todos" :key="item.id">
-          <to-do-item :todo="item.task" :id="index" @delete="pop(index)" @edit="edit(index)" @notes="showNote(index)">
+          <to-do-item :id="item.color" :todo="item.task" @delete="pop(index)" @edit="edit(index)" @notes="showNote(index)" @color-change="changeColor(index, ...arguments)">
             <note v-show="item.showNote" :task="item.task" :message="item.message" @edit="editNote(index)" @close="showNote(index)"/>
           </to-do-item>
         </li>
         <div ref="notes"></div>
       </ul>
+      
   </div>
 </template>
 
@@ -47,7 +46,8 @@ export default {
           task:this.todo, 
           id:Date.now(),
           message:"",
-          showNote: false
+          showNote: false,
+          color: "none"
         }
       ); //the id allows us to have tasks of duplicate names
       this.todo = "";
@@ -63,6 +63,9 @@ export default {
     },
     editNote(index){
       this.todos[index].message = document.getElementById("edit-note").value; // change the task at the given index
+    },
+    changeColor(index, color){
+      this.todos[index].color = color;
     }
   },
   components:{
@@ -77,10 +80,19 @@ export default {
     margin:0px;
     font-family: Arial, Helvetica, sans-serif;
   }
+  :root{
+    --bg-color:rgb(119, 136, 153);
+    --unchecked-bg-color:rgba(255,255,255,.5);
+    --checked-bg-color:rgba(255,255,255,.25);
+    --checked-font-color:rgba(255,255,255,.5);
+    --input-focus:rgba(255,255,255,.75);
+  }
   #app{
     padding: 10px;
-    background-color: lightslategrey;
-    height: 100vh;
+    background-color: var(--bg-color);
+  }
+  body{
+    background-color: var(--bg-color);
   }
   ul{
     padding: 0px;
@@ -99,12 +111,12 @@ export default {
     margin: 1rem 1.5rem;
     padding: 10px;
   }
-  .checked{
-    background-color: rgba(255,255,255,.5);
-  }
   .unchecked{
-    background-color: rgba(255,255,255,.25);
-    color: rgba(255,255,255,.5);
+    background-color: var(--unchecked-bg-color);
+  }
+  .checked{
+    background-color: var(--checked-bg-color);
+    color: var(--checked-font-color);
   }
   .list-container {
     display: inline-block;
@@ -115,27 +127,31 @@ export default {
     width: 100%;
     height: 40px;
     font-size: 20px;
-    background-color: rgba(255,255,255,.5);
+    background-color: var(--unchecked-bg-color);
+  }
+  .color{
+    height: 20px;
+    font-size: 10px;
   }
   .input:focus{
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: var(--input-focus);
   }
   .button{
-    background-color: lightslategray;
+    background-color: rgb(119, 136, 153);
     border: none;
     margin-top: .25rem;
     margin-right: .1rem;
   }
   .note-box{
-    background-color: rgba(255,255,255,.5);
-    width: 24rem;
+    background-color: var(--unchecked-bg-color);
+    width: 90%;
     height: 28rem;
     padding: .5rem;
     margin-top: .5rem;
   }
   .message-box{
     margin-top: .5rem;
-    background-color: rgba(255,255,255,.5);
+    background-color: var(--unchecked-bg-color);
     width: 95%;
     height: 90%;
   }
@@ -148,5 +164,22 @@ export default {
   .note-title{
     display: inline;
     padding-bottom: .5rem;
+  }
+  .color-picker{
+    display: inline-block;
+    width:6.5%
+  }
+  .color{
+    border-radius: 50%;
+    display: inline;
+  }
+  #red{
+    background-color: red;
+  }
+  #yellow{
+    background-color: yellow;
+  }
+  #none{
+    background-color: var(--unchecked-bg-color);
   }
 </style>
